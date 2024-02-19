@@ -45,7 +45,7 @@ function Read() {
             <NameInputStyle
               required
               placeholder="최대 20글자까지 작성할 수 있습니다."
-              maxlength="20"
+              maxLength="20"
               value={name}
               type="text"
               onChange={(event) => {
@@ -59,7 +59,7 @@ function Read() {
               required
               placeholder="최대 100자까지만 작성할 수 있습니다."
               value={context}
-              maxlength="100"
+              maxLength="100"
               type="text"
               onChange={(event) => {
                 setContext(event.target.value);

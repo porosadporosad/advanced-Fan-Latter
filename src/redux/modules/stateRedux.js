@@ -1,26 +1,28 @@
-const FAN_LATTER_ARR = "FAN_LATTER_ARR";
-const COLOR_PLAYER = "COLOR_PLAYER";
-const FILTERD_ARR = "FILTERD_ARR";
+import { createSlice } from "@reduxjs/toolkit";
 
-export const fanLatterArray = (payload) => {
-  return {
-    type: FAN_LATTER_ARR,
-    payload,
-  };
-};
+// const FAN_LATTER_ARR = "FAN_LATTER_ARR";
+// const COLOR_PLAYER = "COLOR_PLAYER";
+// const FILTERD_ARR = "FILTERD_ARR";
 
-export const color_player = (payload) => {
-  return {
-    type: COLOR_PLAYER,
-    payload,
-  };
-};
+// export const fanLatterArray = (payload) => {
+//   return {
+//     type: FAN_LATTER_ARR,
+//     payload,
+//   };
+// };
 
-export const filterd_Arr = () => {
-  return {
-    type: FILTERD_ARR,
-  };
-};
+// export const color_player = (payload) => {
+//   return {
+//     type: COLOR_PLAYER,
+//     payload,
+//   };
+// };
+
+// export const filterd_Arr = () => {
+//   return {
+//     type: FILTERD_ARR,
+//   };
+// };
 
 export const firstDate = [
   {
@@ -60,29 +62,50 @@ const initialState = {
 };
 
 // 리듀서
-const stateRedux = (state = initialState, action) => {
-  switch (action.type) {
-    case FAN_LATTER_ARR:
-      return {
-        ...state,
-        fanLatterArr: action.payload,
-      };
-    case COLOR_PLAYER:
-      return {
-        ...state,
-        colorPlayer: action.payload,
-      };
-    case FILTERD_ARR:
+// const stateRedux = (state = initialState, action) => {
+//   switch (action.type) {
+//     case FAN_LATTER_ARR:
+//       return {
+//         ...state,
+//         fanLatterArr: action.payload,
+//       };
+//     case COLOR_PLAYER:
+//       return {
+//         ...state,
+//         colorPlayer: action.payload,
+//       };
+//     case FILTERD_ARR:
+//       const arr = state.fanLatterArr.filter(
+//         (prev) => prev.player === state.colorPlayer
+//       );
+//       return {
+//         ...state,
+//         filterdArr: arr,
+//       };
+//     default:
+//       return state;
+//   }
+// };
+
+const stateReduxSlice = createSlice({
+  name: "stateRedux",
+  initialState,
+  reducers: {
+    fanLatterArray: (state, action) => {
+      state.fanLatterArr = action.payload;
+    },
+    color_player: (state, action) => {
+      state.colorPlayer = action.payload;
+    },
+    filterd_Arr: (state) => {
       const arr = state.fanLatterArr.filter(
         (prev) => prev.player === state.colorPlayer
       );
-      return {
-        ...state,
-        filterdArr: arr,
-      };
-    default:
-      return state;
-  }
-};
+      state.filterdArr = arr;
+    },
+  },
+});
 
-export default stateRedux;
+export default stateReduxSlice.reducer;
+export const { fanLatterArray, color_player, filterd_Arr } =
+  stateReduxSlice.actions;

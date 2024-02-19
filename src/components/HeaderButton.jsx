@@ -33,8 +33,8 @@ function HeaderButton({ player, children }) {
 
   return (
     <HeaderBtn
-      backgroundColor={btnColor[player]}
-      mainColor={clickMainColor === player}
+      $backgroundColor={btnColor[player]}
+      $mainColor={clickMainColor === player}
       onClick={() => onClickPlayer(player)}
     >
       {children}
@@ -46,8 +46,8 @@ export default HeaderButton;
 
 const HeaderBtn = styled.button`
   border: 1px solid black;
-  background-color: ${(props) => props.backgroundColor};
-  color: ${(props) => (props.mainColor ? "black" : "white")};
+  background-color: ${(props) => props.$backgroundColor};
+  color: ${(props) => (props.$mainColor ? "black" : "white")};
   width: 100px;
   height: 40px;
   margin: 10px;
