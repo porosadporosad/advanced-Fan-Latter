@@ -31,16 +31,26 @@
 - 상세화면에서 팬레터 내용 수정 구현
 - 상세화면에서 팬레터 삭제 구현
 
+### 
+
 ### 📃화면이미지
 #### 로그인
- ![이미지 이름](https://github.com/porosadporosad/advanced-Fan-Latter/blob/redux-thunk/mainImg/login.png)
+<p align="center">
+  <img src="https://github.com/porosadporosad/advanced-Fan-Latter/blob/redux-thunk/mainImg/login.png" width="300" />
+</p>
 
 #### 홈
- ![이미지 이름](https://github.com/porosadporosad/advanced-Fan-Latter/blob/redux-thunk/mainImg/home.png)
+<p align="center">
+  <img src="https://github.com/porosadporosad/advanced-Fan-Latter/blob/redux-thunk/mainImg/home.png" width="300" />
+</p>
 
 #### 프로필
- ![이미지 이름](https://github.com/porosadporosad/advanced-Fan-Latter/blob/redux-thunk/mainImg/profile.png)
+<p align="center">
+  <img src="https://github.com/porosadporosad/advanced-Fan-Latter/blob/redux-thunk/mainImg/profile.png" width="300" />
+</p>
 
 #### 상세보기
- ![이미지 이름](https://github.com/porosadporosad/advanced-Fan-Latter/blob/redux-thunk/mainImg/sub.png)
+<p align="center">
+  <img src="https://github.com/porosadporosad/advanced-Fan-Latter/blob/redux-thunk/mainImg/sub.png" width="300" />
+</p>
 
