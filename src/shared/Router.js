@@ -1,20 +1,26 @@
-import Login from "components/Login";
-import Pofile from "components/Pofile";
+import Login from "pages/Login";
 import Home from "pages/Home";
 import Sub from "pages/Sub";
-import { useSelector } from "react-redux";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import Layout from "pages/Layout";
+import Profile from "pages/Profile";
+import AuthLayout from "shared/AuthLayout";
+import NonAuthLayout from "shared/NonAuthLayout";
 
 const Router = () => {
-  const nowLoginOn = useSelector((state) => state.authSlice.loginNow.success);
-
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={nowLoginOn ? <Home /> : <Login />} />
-        <Route path="sub/:id" element={<Sub />} />
-        {/* <Route path="/login" element={<Login />} /> */}
-        <Route path="/pofile" element={<Pofile />} />
+        <Route element={<NonAuthLayout />}>
+          <Route path="/login" element={<Login />} />
+        </Route>
+        <Route element={<AuthLayout />}>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="sub/:id" element={<Sub />} />
+          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );

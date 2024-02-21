@@ -1,58 +1,52 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import Context from "./Context";
-import { fanLatterArray } from "../redux/modules/stateRedux";
+import { __fanLatterArray } from "../redux/modules/stateRedux";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 
 function Read() {
-  const [name, setName] = useState("");
   const [context, setContext] = useState("");
   const [player, setPlayer] = useState("son");
+
+  const name = JSON.parse(localStorage.getItem("nickname"));
+  const userId = JSON.parse(localStorage.getItem("userId"));
+  const avatar = JSON.parse(localStorage.getItem("avatar"));
 
   const fanLatterArr = useSelector((state) => state.stateRedux.fanLatterArr);
   const dispatch = useDispatch();
 
+  // 작성
   const submitFanletter = (event) => {
     event.preventDefault();
+    // 작성시간
     const time = () => {
       const date = new Date();
-      const test = date.toLocaleString();
-      return test;
+      const dateNumber = date.toLocaleString();
+      return dateNumber;
     };
+
     const newContext = {
-      name: name,
-      context: context,
-      player: player,
-      time: time(),
+      nickname: name,
+      content: context,
+      player,
+      createdAt: time(),
       id: uuidv4(),
+      avatar,
+      userId,
     };
     const newArr = [...fanLatterArr, newContext];
     localStorage.setItem("arr", JSON.stringify(newArr));
-    const getLocal = localStorage.getItem("arr");
-    const json = JSON.parse(getLocal);
-    dispatch(fanLatterArray(json));
+    const getLocal = JSON.parse(localStorage.getItem("arr"));
+    dispatch(__fanLatterArray.fulfilled(getLocal));
     setContext("");
-    setName("");
   };
 
   return (
     <MainDiv>
       <ReadInput>
         <form onSubmit={submitFanletter}>
-          <div>
-            닉네임:{" "}
-            <NameInputStyle
-              required
-              placeholder="최대 20글자까지 작성할 수 있습니다."
-              maxLength="20"
-              value={name}
-              type="text"
-              onChange={(event) => {
-                setName(event.target.value);
-              }}
-            />
-          </div>
+          <div>닉네임: {name} </div>
           <div>
             <InputLabel>내용:</InputLabel>
             <ContextInputStyle
@@ -110,12 +104,6 @@ const ReadInput = styled.div`
   border-radius: 10px;
   margin: 20px;
   color: black;
-`;
-
-const NameInputStyle = styled.input`
-  width: 400px;
-  height: 28px;
-  margin-bottom: 10px;
 `;
 
 const ContextInputStyle = styled.input`

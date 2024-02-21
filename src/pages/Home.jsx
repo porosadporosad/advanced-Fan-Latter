@@ -1,22 +1,20 @@
 import React, { useEffect } from "react";
 import Header from "../components/Header";
 import Read from "../components/Read";
-import { fanLatterArray, firstDate } from "../redux/modules/stateRedux";
+import { __fanLatterArray } from "../redux/modules/stateRedux";
 import { useDispatch } from "react-redux";
 
 function Home() {
   const dispatch = useDispatch();
-  useEffect(() => {
-    const getLocal = localStorage.getItem("arr");
-    const json = JSON.parse(getLocal);
 
-    if (json) {
-      dispatch(fanLatterArray(json));
+  useEffect(() => {
+    const getLocal = JSON.parse(localStorage.getItem("arr"));
+    // arr 로컬스토리지가 있으면 가져오기 없으면 서버에서 가져오기
+    if (getLocal) {
+      dispatch(__fanLatterArray.fulfilled(getLocal));
     } else {
-      localStorage.setItem("arr", JSON.stringify(firstDate));
-      dispatch(fanLatterArray(firstDate));
+      dispatch(__fanLatterArray());
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

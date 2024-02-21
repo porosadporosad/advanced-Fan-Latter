@@ -7,10 +7,13 @@ import { filterd_Arr } from "../redux/modules/stateRedux";
 
 function Context() {
   const colorPlayer = useSelector((state) => state.stateRedux.colorPlayer);
-  const fanLatterArr = useSelector((state) => state.stateRedux.fanLatterArr);
   const filterdArr = useSelector((state) => state.stateRedux.filterdArr);
   const dispatch = useDispatch();
+  const { isLoading, error, fanLatterArr } = useSelector((state) => {
+    return state.stateRedux;
+  });
 
+  // 글자 길이
   const overLength = (overContext) => {
     if (overContext) {
       return overContext.length > 20
@@ -20,6 +23,16 @@ function Context() {
     return null;
   };
 
+  // 사진
+  const img = (user) => {
+    if (user) {
+      return user;
+    } else {
+      return userImg;
+    }
+  };
+
+  // 팬레터가 없을시
   const playerChange = (item) => {
     switch (item) {
       case "son":
@@ -42,6 +55,14 @@ function Context() {
     dispatch(filterd_Arr());
   }, [fanLatterArr]);
 
+  if (isLoading) {
+    return <div>로딩중...</div>;
+  }
+
+  if (error) {
+    return <div>{error.message}</div>;
+  }
+
   return (
     <MainDiv>
       {filterdArr.length !== 0 ? (
@@ -49,14 +70,14 @@ function Context() {
           <ContextDiv key={prev.id} to={`/sub/${prev.id}`}>
             <SectionStyle>
               <ImgDiv>
-                <ImgStyle src={userImg} alt="유저 프로필 이미지" />
+                <ImgStyle src={img(prev.avatar)} alt="유저 프로필 이미지" />
               </ImgDiv>
               <NameTiemDiv>
-                <span>{prev.name}</span>
-                <TimeStyle>{prev.time}</TimeStyle>
+                <span>{prev.nickname}</span>
+                <TimeStyle>{prev.createdAt}</TimeStyle>
               </NameTiemDiv>
             </SectionStyle>
-            <ContextStyle>{overLength(prev.context)}</ContextStyle>
+            <ContextStyle>{overLength(prev.content)}</ContextStyle>
           </ContextDiv>
         ))
       ) : (

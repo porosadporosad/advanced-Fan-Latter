@@ -1,23 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ImgDiv, ImgStyle, SectionStyle } from "components/Context";
 import { useNavigate, useParams } from "react-router-dom";
 import { userImg } from "img";
+import { useSelector } from "react-redux";
+import { loginInstance } from "../axios/api";
 
 function Sub() {
-  const nav = useNavigate();
-  const par = useParams();
+  const [nowLogin, setNotLogin] = useState(false);
   const [changeBool, setChangeBool] = useState(false);
 
-  const nowDate = (id) => {
-    const getLocal = localStorage.getItem("arr");
-    const json = JSON.parse(getLocal);
-    const index = json.findIndex((item) => item.id === id);
-    return json[index];
-  };
+  const fanLatterArr = useSelector((state) => state.stateRedux.fanLatterArr);
+  const accessToken = JSON.parse(localStorage.getItem("accessToken"));
 
+  const nav = useNavigate();
+  const par = useParams();
+
+  // 현재 로그인된 정보
+  const nowDate = (id) => {
+    const index = fanLatterArr.findIndex((item) => item.id === id);
+    return fanLatterArr[index];
+  };
   const subMainDate = nowDate(par.id);
-  const [contextChange, setContextChange] = useState(subMainDate.context);
+
+  const [contextChange, setContextChange] = useState(subMainDate.content);
 
   const playerName = (palyer) => {
     switch (palyer) {
@@ -34,6 +40,12 @@ function Sub() {
     }
   };
 
+  // 버튼 바뀌는 불리언
+  const subUp = () => {
+    setChangeBool(!changeBool);
+  };
+
+  // 삭제
   const subDel = (id) => {
     const real = window.confirm("삭제하시겠습니까?");
     if (real) {
@@ -47,52 +59,82 @@ function Sub() {
     }
   };
 
-  const subUp = () => {
-    setChangeBool(!changeBool);
-  };
-
+  // 수정
   const subUpdateMain = () => {
-    if (contextChange === subMainDate.context) {
+    if (contextChange === subMainDate.content) {
       alert("수정된게 없어요!");
     } else {
       const real = window.confirm("수정하시겠습니까?");
       if (!real) {
         setChangeBool(!changeBool);
-        setContextChange(subMainDate.context);
+        setContextChange(subMainDate.content);
       } else {
         const getLocal = localStorage.getItem("arr");
         const json = JSON.parse(getLocal);
         const index = json.findIndex((item) => item.id === par.id);
         const newArr = [...json];
-        newArr[index].context = contextChange;
+        newArr[index].content = contextChange;
         localStorage.setItem("arr", JSON.stringify(newArr));
         nav("/");
       }
     }
   };
 
+  // 내용변경
   const subContextChange = (event) => {
     const newContext = event.target.value;
     setContextChange(newContext);
   };
+
+  // 현재 로그인한 유저 확인
+  useEffect(() => {
+    const subMaster = async () => {
+      try {
+        // 유저정보 가져오기
+        const response = await loginInstance.get("/user", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        // 상세보기와 현재 로그인정보가 맞는지 비교
+        if (subMainDate.userId == response.data.id) {
+          setNotLogin(true);
+        } else {
+          setNotLogin(false);
+        }
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+
+    subMaster();
+  }, []);
+
+  // 이미지 없을 시 기본 이미지
+  const img = (user) => {
+    if (user) {
+      return user;
+    } else {
+      return userImg;
+    }
+  };
+
   return (
     <>
-      <BtnStyle
-        onClick={() => {
-          nav("/");
-        }}
-      >
-        홈으로
-      </BtnStyle>
       <BodyStyle>
         <SubMainStyle>
           <SectionStyle>
             <ImgDiv>
-              <ImgStyle src={userImg} alt="유저 프로필 이미지" />
+              <ImgStyle
+                src={img(subMainDate.avatar)}
+                alt="유저 프로필 이미지"
+              />
             </ImgDiv>
             <NameTime>
-              <Name>{subMainDate.name}</Name>
-              <span>{subMainDate.time}</span>
+              <Name>{subMainDate.nickname}</Name>
+              <span>{subMainDate.createdAt}</span>
             </NameTime>
           </SectionStyle>
           <Name>To.{playerName(subMainDate.player)}</Name>
@@ -102,15 +144,17 @@ function Sub() {
               onChange={subContextChange}
             />
           ) : (
-            <SubContext>{subMainDate.context}</SubContext>
+            <SubContext>{subMainDate.content}</SubContext>
           )}
-          <BtnDiv changeBool={changeBool}>
-            <SubBtnUD onClick={subUp}>수정</SubBtnUD>
-            <SubBtnUD onClick={() => subDel(subMainDate.id)}>삭제</SubBtnUD>
-          </BtnDiv>
-          <UpdateComplBtn changeBool={changeBool} onClick={subUpdateMain}>
-            수정완료
-          </UpdateComplBtn>
+          <UserCheck $nowLogin={nowLogin}>
+            <BtnDiv $changeBool={changeBool}>
+              <SubBtnUD onClick={subUp}>수정</SubBtnUD>
+              <SubBtnUD onClick={() => subDel(subMainDate.id)}>삭제</SubBtnUD>
+            </BtnDiv>
+            <UpdateComplBtn $changeBool={changeBool} onClick={subUpdateMain}>
+              수정완료
+            </UpdateComplBtn>
+          </UserCheck>
         </SubMainStyle>
       </BodyStyle>
     </>
@@ -120,18 +164,15 @@ function Sub() {
 export default Sub;
 
 const BodyStyle = styled.div`
+  width: 100vw;
+  height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
-`;
-
-const BtnStyle = styled.button`
-  background-color: black;
-  color: white;
-  width: 100px;
-  height: 50px;
-  margin: 40px;
-  cursor: pointer;
+  align-items: center;
+  background-image: url("https://newsimg-hams.hankookilbo.com/2022/12/07/ee1e140e-f6b9-4f65-bc57-4f8fdcfdeecd.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 `;
 
 const SubMainStyle = styled.div`
@@ -177,7 +218,7 @@ const SubContextInput = styled.input`
 
 const BtnDiv = styled.div`
   margin: 5px 0 0 685px;
-  display: ${(props) => (props.changeBool ? "none" : "")};
+  display: ${(props) => (props.$changeBool ? "none" : "")};
 `;
 const SubBtnUD = styled.button`
   background-color: black;
@@ -189,11 +230,15 @@ const SubBtnUD = styled.button`
 `;
 
 const UpdateComplBtn = styled.button`
-  display: ${(props) => (props.changeBool ? "" : "none")};
+  display: ${(props) => (props.$changeBool ? "" : "none")};
   background-color: black;
   color: white;
   width: 100px;
   height: 30px;
   cursor: pointer;
   margin: 5px 0 0 685px;
+`;
+
+const UserCheck = styled.div`
+  display: ${(props) => (props.$nowLogin ? "" : "none")};
 `;

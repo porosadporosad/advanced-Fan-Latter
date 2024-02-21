@@ -1,99 +1,35 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { letterInstance } from "../../axios/api.js";
 
-// const FAN_LATTER_ARR = "FAN_LATTER_ARR";
-// const COLOR_PLAYER = "COLOR_PLAYER";
-// const FILTERD_ARR = "FILTERD_ARR";
-
-// export const fanLatterArray = (payload) => {
-//   return {
-//     type: FAN_LATTER_ARR,
-//     payload,
-//   };
-// };
-
-// export const color_player = (payload) => {
-//   return {
-//     type: COLOR_PLAYER,
-//     payload,
-//   };
-// };
-
-// export const filterd_Arr = () => {
-//   return {
-//     type: FILTERD_ARR,
-//   };
-// };
-
-export const firstDate = [
-  {
-    name: "해리케인",
-    context: "흥민아 힘내라",
-    player: "son",
-    time: "2024. 2. 10. 오후 3:55:57",
-    id: "1",
-  },
-  {
-    name: "3대째 토트넘팬",
-    context: "대 흥 민",
-    player: "son",
-    time: "2024. 2. 11. 오후 12:16:33",
-    id: "2",
-  },
-  {
-    name: "세리에최고수비수",
-    context: "뮌헨에서도 화이팅..",
-    player: "kim",
-    time: "2024. 2. 15. 오전 9:30:56",
-    id: "3",
-  },
-  {
-    name: "여진구",
-    context: "잘생겨서 배우해도 될듯",
-    player: "hwang",
-    time: "2024. 2. 18. 오후 10:51:24",
-    id: "4",
-  },
-];
 // 초기 상태값
 const initialState = {
-  fanLatterArr: firstDate,
+  fanLatterArr: [],
   colorPlayer: "son",
   filterdArr: [],
+  isLoading: false,
+  isError: false,
+  error: null,
 };
 
-// 리듀서
-// const stateRedux = (state = initialState, action) => {
-//   switch (action.type) {
-//     case FAN_LATTER_ARR:
-//       return {
-//         ...state,
-//         fanLatterArr: action.payload,
-//       };
-//     case COLOR_PLAYER:
-//       return {
-//         ...state,
-//         colorPlayer: action.payload,
-//       };
-//     case FILTERD_ARR:
-//       const arr = state.fanLatterArr.filter(
-//         (prev) => prev.player === state.colorPlayer
-//       );
-//       return {
-//         ...state,
-//         filterdArr: arr,
-//       };
-//     default:
-//       return state;
-//   }
-// };
+export const __fanLatterArray = createAsyncThunk(
+  "FAN_LATTER_ARRAY_WAIT",
+  async (payload, thunkAPI) => {
+    try {
+      const response = await letterInstance.get("/letters");
+      console.log("dd", response);
+
+      return thunkAPI.fulfillWithValue(response.data);
+    } catch (error) {
+      console.log("dd", error);
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
 
 const stateReduxSlice = createSlice({
   name: "stateRedux",
   initialState,
   reducers: {
-    fanLatterArray: (state, action) => {
-      state.fanLatterArr = action.payload;
-    },
     color_player: (state, action) => {
       state.colorPlayer = action.payload;
     },
@@ -104,8 +40,24 @@ const stateReduxSlice = createSlice({
       state.filterdArr = arr;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(__fanLatterArray.pending, (state, action) => {
+        state.isLoading = true;
+        state.isError = false;
+      })
+      .addCase(__fanLatterArray.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.fanLatterArr = action.payload;
+      })
+      .addCase(__fanLatterArray.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.error = action.payload;
+      });
+  },
 });
 
 export default stateReduxSlice.reducer;
-export const { fanLatterArray, color_player, filterd_Arr } =
-  stateReduxSlice.actions;
+export const { color_player, filterd_Arr } = stateReduxSlice.actions;

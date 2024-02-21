@@ -11,14 +11,15 @@ function HeaderButton({ player, children }) {
     (state) => state.colorChange.clickMainColor
   );
 
+  // 현재 선수 적용
   const onClickPlayer = (name) => {
     clickbtnColor(name);
     dispatch(color_player(name));
-
     dispatch(click_Main_Color(name));
     dispatch(filterd_Arr());
   };
 
+  // 글자 색상 선수에 따라
   const clickbtnColor = (player) => {
     const updatedColors = {
       son: "black",

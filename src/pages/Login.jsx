@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-// import { useNavigate } from "react-router-dom";
 import { login } from "../redux/modules/authSlice";
 import styled from "styled-components";
-import axios from "axios";
+import { loginInstance } from "../axios/api.js";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [changeBool, setChangeBool] = useState(false);
@@ -12,28 +12,16 @@ function Login() {
   const [registerId, setRegisterId] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [name, setName] = useState("");
-  const [dbLogin, setDbLogin] = useState(null);
-  const [register, setRegister] = useState({
-    id: "",
-    password: "",
-    nickname: "",
-  });
 
   const dispatch = useDispatch();
+  const nav = useNavigate();
 
-  //   const fetchLogin = async () => {
-  //     const { data } = await axios.get(
-  //       " https://moneyfulpublicpolicy.co.kr/register"
-  //     );
-  //     // console.log("data", data);
-  //     setDbLogin(data);
-  //   };
-  //   const registerJWT = () => {};
-  //   console.log(fetchLogin());
+  // 버튼 바뀌는 불리언
   const registerClick = () => {
     setChangeBool(!changeBool);
   };
 
+  // 회원가입
   const registerBtnClick = async (e) => {
     e.preventDefault();
     const newRegister = {
@@ -42,10 +30,8 @@ function Login() {
       nickname: name,
     };
     try {
-      const response = await axios.post(
-        "https://moneyfulpublicpolicy.co.kr/register",
-        newRegister
-      );
+      // 회원가입
+      const response = await loginInstance.post("/register", newRegister);
       setChangeBool(!changeBool);
       alert("회원가입 성공!");
     } catch (error) {
@@ -53,18 +39,18 @@ function Login() {
       return false;
     }
   };
+
+  // 로그인
   const loginBtnClick = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "https://moneyfulpublicpolicy.co.kr/login",
-        { id, password }
-      );
+      // 로그인
+      const response = await loginInstance.post("/login", { id, password });
       const { accessToken, userId, success, avatar, nickname } = response.data;
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("userId", userId);
-      localStorage.setItem("avatar", avatar);
-      localStorage.setItem("nickname", nickname);
+      localStorage.setItem("accessToken", JSON.stringify(accessToken));
+      localStorage.setItem("userId", JSON.stringify(userId));
+      localStorage.setItem("avatar", JSON.stringify(avatar));
+      localStorage.setItem("nickname", JSON.stringify(nickname));
       dispatch(
         login({
           accessToken,
@@ -74,6 +60,7 @@ function Login() {
           nickname,
         })
       );
+      nav("/");
     } catch (error) {
       alert(error.response.data.message);
     }
@@ -95,6 +82,7 @@ function Login() {
             }}
           />
           <LoginInput
+            type="password"
             minLength="4"
             maxLength="15"
             placeholder="비밀번호 (4~15글자)"
@@ -136,6 +124,7 @@ function Login() {
             }}
           />
           <LoginInput
+            type="password"
             minLength="4"
             maxLength="15"
             placeholder="비밀번호 (4~15글자)"
@@ -160,12 +149,14 @@ function Login() {
 export default Login;
 
 const LoginBody = styled.div`
+  background-image: url("https://pds.joongang.co.kr/news/component/htmlphoto_mmdata/202211/19/678ab656-5de3-4eee-a262-2fea151deca5.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
   width: 100vw;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: lightgray;
   color: black;
 `;
 
@@ -179,6 +170,7 @@ const LoginMain = styled.form`
 `;
 
 const LoginMainH1 = styled.h1`
+  margin-top: 1rem;
   font-size: 36px;
   margin-bottom: 36px;
 `;
@@ -207,6 +199,8 @@ const LoginBtn = styled.button`
   width: 100%;
   font-size: 20px;
   padding: 24px 36px;
+  border-radius: 1rem;
+  border: none;
 `;
 
 const RegisterDiv = styled.div`
