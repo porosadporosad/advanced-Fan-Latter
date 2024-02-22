@@ -3,8 +3,9 @@ import styled from "styled-components";
 import { ImgDiv, ImgStyle, SectionStyle } from "components/Context";
 import { useNavigate, useParams } from "react-router-dom";
 import { userImg } from "img";
-import { useSelector } from "react-redux";
-import { loginInstance } from "../axios/api";
+import { useDispatch, useSelector } from "react-redux";
+import { letterInstance, loginInstance } from "../axios/api";
+import { __fanLatterArray } from "../redux/modules/stateRedux";
 
 function Sub() {
   const [nowLogin, setNotLogin] = useState(false);
@@ -13,8 +14,11 @@ function Sub() {
   const fanLatterArr = useSelector((state) => state.stateRedux.fanLatterArr);
   const accessToken = JSON.parse(localStorage.getItem("accessToken"));
 
+  console.log("fanLatterArrfanLatterArr", fanLatterArr);
+
   const nav = useNavigate();
   const par = useParams();
+  const dispatch = useDispatch();
 
   // 현재 로그인된 정보
   const nowDate = (id) => {
@@ -46,13 +50,11 @@ function Sub() {
   };
 
   // 삭제
-  const subDel = (id) => {
+  const subDel = async (id) => {
     const real = window.confirm("삭제하시겠습니까?");
     if (real) {
-      const getLocal = localStorage.getItem("arr");
-      const json = JSON.parse(getLocal);
-      const newArr = json.filter((prev) => prev.id !== id);
-      localStorage.setItem("arr", JSON.stringify(newArr));
+      await letterInstance.delete(`/letters/${id}`);
+      dispatch(__fanLatterArray());
       nav("/");
     } else {
       return false;
@@ -60,7 +62,7 @@ function Sub() {
   };
 
   // 수정
-  const subUpdateMain = () => {
+  const subUpdateMain = async (id) => {
     if (contextChange === subMainDate.content) {
       alert("수정된게 없어요!");
     } else {
@@ -69,12 +71,10 @@ function Sub() {
         setChangeBool(!changeBool);
         setContextChange(subMainDate.content);
       } else {
-        const getLocal = localStorage.getItem("arr");
-        const json = JSON.parse(getLocal);
-        const index = json.findIndex((item) => item.id === par.id);
-        const newArr = [...json];
-        newArr[index].content = contextChange;
-        localStorage.setItem("arr", JSON.stringify(newArr));
+        await letterInstance.patch(`/letters/${id}`, {
+          content: contextChange,
+        });
+        dispatch(__fanLatterArray());
         nav("/");
       }
     }
@@ -151,7 +151,10 @@ function Sub() {
               <SubBtnUD onClick={subUp}>수정</SubBtnUD>
               <SubBtnUD onClick={() => subDel(subMainDate.id)}>삭제</SubBtnUD>
             </BtnDiv>
-            <UpdateComplBtn $changeBool={changeBool} onClick={subUpdateMain}>
+            <UpdateComplBtn
+              $changeBool={changeBool}
+              onClick={() => subUpdateMain(subMainDate.id)}
+            >
               수정완료
             </UpdateComplBtn>
           </UserCheck>

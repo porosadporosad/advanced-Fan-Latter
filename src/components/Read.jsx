@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import Context from "./Context";
 import { __fanLatterArray } from "../redux/modules/stateRedux";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
+import { letterInstance } from "../axios/api";
 
 function Read() {
   const [context, setContext] = useState("");
@@ -13,11 +14,10 @@ function Read() {
   const userId = JSON.parse(localStorage.getItem("userId"));
   const avatar = JSON.parse(localStorage.getItem("avatar"));
 
-  const fanLatterArr = useSelector((state) => state.stateRedux.fanLatterArr);
   const dispatch = useDispatch();
 
   // 작성
-  const submitFanletter = (event) => {
+  const submitFanletter = async (event) => {
     event.preventDefault();
     // 작성시간
     const time = () => {
@@ -35,10 +35,8 @@ function Read() {
       avatar,
       userId,
     };
-    const newArr = [...fanLatterArr, newContext];
-    localStorage.setItem("arr", JSON.stringify(newArr));
-    const getLocal = JSON.parse(localStorage.getItem("arr"));
-    dispatch(__fanLatterArray.fulfilled(getLocal));
+    await letterInstance.post("/letters", newContext);
+    dispatch(__fanLatterArray());
     setContext("");
   };
 

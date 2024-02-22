@@ -16,8 +16,6 @@ export const __fanLatterArray = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       const response = await letterInstance.get("/letters");
-      console.log("dd", response);
-
       return thunkAPI.fulfillWithValue(response.data);
     } catch (error) {
       console.log("dd", error);
