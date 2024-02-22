@@ -37,22 +37,21 @@
 
 ### 📃화면이미지
 #### 로그인
-<p align="center">
+
   <img src="https://github.com/porosadporosad/advanced-Fan-Latter/blob/redux-thunk/mainImg/login.png" width="300" />
-</p>
 
 #### 홈
-<p align="center">
+
   <img src="https://github.com/porosadporosad/advanced-Fan-Latter/blob/redux-thunk/mainImg/home.png" width="300" />
-</p>
+
 
 #### 프로필
-<p align="center">
+
   <img src="https://github.com/porosadporosad/advanced-Fan-Latter/blob/redux-thunk/mainImg/profile.png" width="300" />
-</p>
+
 
 #### 상세보기
-<p align="center">
+
   <img src="https://github.com/porosadporosad/advanced-Fan-Latter/blob/redux-thunk/mainImg/sub.png" width="300" />
-</p>
+
 
