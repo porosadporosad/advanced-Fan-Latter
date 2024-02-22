@@ -14,8 +14,6 @@ function Sub() {
   const fanLatterArr = useSelector((state) => state.stateRedux.fanLatterArr);
   const accessToken = JSON.parse(localStorage.getItem("accessToken"));
 
-  console.log("fanLatterArrfanLatterArr", fanLatterArr);
-
   const nav = useNavigate();
   const par = useParams();
   const dispatch = useDispatch();
